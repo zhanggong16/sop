@@ -8,7 +8,8 @@ from werkzeug.datastructures import Headers
 
 blueprints = [
     'elk.error.views:bp',
-    'elk.index.views:bp'
+    'elk.index.views:bp',
+    'elk.monkey.views:bp',
 ]
 
 api_router = import_string('elk.api.views:api_router')

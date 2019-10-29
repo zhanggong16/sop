@@ -3,9 +3,9 @@ Core script to handle the entire theme and core functions
 **/
 var Layout = function () {
 
-    var layoutImgPath = 'layouts/layout/img/';  
+    var layoutImgPath = 'layouts/layout2/img/';
 
-    var layoutCssPath = 'layouts/layout/css/';
+    var layoutCssPath = 'layouts/layout2/css/';
 
     var resBreakpointMd = App.getResponsiveBreakpoint('md');
 
@@ -24,10 +24,6 @@ var Layout = function () {
 
         if (body.hasClass("page-footer-fixed") === true && body.hasClass("page-sidebar-fixed") === false) {
             var available_height = App.getViewPort().height - $('.page-footer').outerHeight() - $('.page-header').outerHeight();
-            var sidebar_height = sidebar.outerHeight();
-            if (sidebar_height > available_height) {
-                available_height = sidebar_height + $('.page-footer').outerHeight();
-            }
             if (content.height() < available_height) {
                 content.css('min-height', available_height);
             }
@@ -154,26 +150,6 @@ var Layout = function () {
 
     // Handle sidebar menu
     var handleSidebarMenu = function () {
-        // offcanvas mobile menu 
-        $('.page-sidebar-mobile-offcanvas .responsive-toggler').click(function(e) {
-            $('body').toggleClass('page-sidebar-mobile-offcanvas-open');
-            e.preventDefault();
-            e.stopPropagation();
-        });
-
-        if ($('body').hasClass('page-sidebar-mobile-offcanvas')) {
-            $(document).on('click', function(e) {
-                if ($('body').hasClass('page-sidebar-mobile-offcanvas-open')) {
-                    if ($(e.target).closest('.page-sidebar-mobile-offcanvas .responsive-toggler').length === 0 && 
-                        $(e.target).closest('.page-sidebar-wrapper').length === 0) { 
-                        $('body').removeClass('page-sidebar-mobile-offcanvas-open');
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                }                
-            });
-        }
-
         // handle sidebar link click
         $('.page-sidebar-menu').on('click', 'li > a.nav-toggle, li > a > span.nav-toggle', function (e) {
             var that = $(this).closest('.nav-item').children('.nav-link');
@@ -194,7 +170,7 @@ var Layout = function () {
                 }
                 return;
             }
-
+            
             var parent =that.parent().parent();
             var the = that;
             var menu = $('.page-sidebar-menu');
@@ -203,8 +179,8 @@ var Layout = function () {
             var autoScroll = menu.data("auto-scroll");
             var slideSpeed = parseInt(menu.data("slide-speed"));
             var keepExpand = menu.data("keep-expanded");
-            
-            if (!keepExpand) {
+
+            if (keepExpand !== true) {
                 parent.children('li.open').children('a').children('.arrow').removeClass('open');
                 parent.children('li.open').children('.sub-menu:not(.always-open)').slideUp(slideSpeed);
                 parent.children('li.open').removeClass('open');
@@ -260,6 +236,7 @@ var Layout = function () {
         $('.page-sidebar').on('click', ' li > a.ajaxify', function (e) {
             e.preventDefault();
             App.scrollTop();
+
             var url = $(this).attr("href");
             var menuContainer = $('.page-sidebar ul');
 
@@ -285,6 +262,8 @@ var Layout = function () {
             App.scrollTop();
 
             var url = $(this).attr("href");
+
+            App.startPageLoading();
 
             if (App.getViewPort().width < resBreakpointMd && $('.page-sidebar').hasClass("in")) { // close the menu on mobile view while laoding a page 
                 $('.page-header .responsive-toggler').click();
@@ -346,9 +325,38 @@ var Layout = function () {
         }
     };
 
+    // Handles the horizontal menu
+    var handleHeader = function() {
+        // handle search box expand/collapse        
+        $('.page-header').on('click', '.search-form', function(e) {
+            $(this).addClass("open");
+            $(this).find('.form-control').focus();
+
+            $('.page-header .search-form .form-control').on('blur', function(e) {
+                $(this).closest('.search-form').removeClass("open");
+                $(this).unbind("blur");
+            });
+        });
+
+        // handle hor menu search form on enter press
+        $('.page-header').on('keypress', '.hor-menu .search-form .form-control', function(e) {
+            if (e.which == 13) {
+                $(this).closest('.search-form').submit();
+                return false;
+            }
+        });
+
+        // handle header search button click
+        $('.page-header').on('mousedown', '.search-form.open .submit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).closest('.search-form').submit();
+        });
+    };
+
     // Helper function to calculate sidebar height for fixed sidebar layout.
     var _calculateFixedSidebarViewportHeight = function () {
-        var sidebarHeight = App.getViewPort().height - $('.page-header').outerHeight(true);
+        var sidebarHeight = App.getViewPort().height - $('.page-header').outerHeight();
         if ($('body').hasClass("page-footer-fixed")) {
             sidebarHeight = sidebarHeight - $('.page-footer').outerHeight();
         }
@@ -360,30 +368,30 @@ var Layout = function () {
     var handleFixedSidebar = function () {
         var menu = $('.page-sidebar-menu');
 
-        handleSidebarAndContentHeight();
+        App.destroySlimScroll(menu);
 
         if ($('.page-sidebar-fixed').size() === 0) {
-            App.destroySlimScroll(menu);
+            handleSidebarAndContentHeight();
             return;
         }
 
-        if (App.getViewPort().width >= resBreakpointMd && !$('body').hasClass('page-sidebar-menu-not-fixed')) {
+        if (App.getViewPort().width >= resBreakpointMd) {
             menu.attr("data-height", _calculateFixedSidebarViewportHeight());
-            App.destroySlimScroll(menu);
             App.initSlimScroll(menu);
             handleSidebarAndContentHeight();
-        } 
+        }
     };
 
     // Handles sidebar toggler to close/hide the sidebar.
     var handleFixedSidebarHoverEffect = function () {
-        if ($('body').hasClass('page-sidebar-fixed')) {
+        var body = $('body');
+        if (body.hasClass('page-sidebar-fixed')) {
             $('.page-sidebar').on('mouseenter', function () {
-                if ($('body').hasClass('page-sidebar-closed')) {
+                if (body.hasClass('page-sidebar-closed')) {
                     $(this).find('.page-sidebar-menu').removeClass('page-sidebar-menu-closed');
                 }
             }).on('mouseleave', function () {
-                if ($('body').hasClass('page-sidebar-closed')) {
+                if (body.hasClass('page-sidebar-closed')) {
                     $(this).find('.page-sidebar-menu').addClass('page-sidebar-menu-closed');
                 }
             });
@@ -391,7 +399,9 @@ var Layout = function () {
     };
 
     // Hanles sidebar toggler
-    var handleSidebarToggler = function () {       
+    var handleSidebarToggler = function () {
+        var body = $('body');
+
         /**
         if (Cookies && Cookies.get('sidebar_closed') === '1' && App.getViewPort().width >= resBreakpointMd) {
             $('body').addClass('page-sidebar-closed');
@@ -401,7 +411,6 @@ var Layout = function () {
 
         // handle sidebar show/hide
         $('body').on('click', '.sidebar-toggler', function (e) {
-            var body = $('body');
             var sidebar = $('.page-sidebar');
             var sidebarMenu = $('.page-sidebar-menu');
             $(".sidebar-search", sidebar).removeClass("open");
@@ -424,52 +433,6 @@ var Layout = function () {
             }
 
             $(window).trigger('resize');
-        });
-    };
-
-    // Handles the horizontal menu
-    var handleHorizontalMenu = function () {
-        //handle tab click
-        $('.page-header').on('click', '.hor-menu a[data-toggle="tab"]', function (e) {
-            e.preventDefault();
-            var nav = $(".hor-menu .nav");
-            var active_link = nav.find('li.current');
-            $('li.active', active_link).removeClass("active");
-            $('.selected', active_link).remove();
-            var new_link = $(this).parents('li').last();
-            new_link.addClass("current");
-            new_link.find("a:first").append('<span class="selected"></span>');
-        });
-
-        // handle search box expand/collapse        
-        $('.page-header').on('click', '.search-form', function (e) {
-            $(this).addClass("open");
-            $(this).find('.form-control').focus();
-
-            $('.page-header .search-form .form-control').on('blur', function (e) {
-                $(this).closest('.search-form').removeClass("open");
-                $(this).unbind("blur");
-            });
-        });
-
-        // handle hor menu search form on enter press
-        $('.page-header').on('keypress', '.hor-menu .search-form .form-control', function (e) {
-            if (e.which == 13) {
-                $(this).closest('.search-form').submit();
-                return false;
-            }
-        });
-
-        // handle header search button click
-        $('.page-header').on('mousedown', '.search-form.open .submit', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).closest('.search-form').submit();
-        });
-
-        
-        $(document).on('click', '.mega-menu-dropdown .dropdown-menu', function (e) {
-            e.stopPropagation();
         });
     };
 
@@ -532,7 +495,7 @@ var Layout = function () {
                 height = height -
                     target.find('.portlet-title').outerHeight(true) -
                     parseInt(target.find('.portlet-body').css('padding-top')) -
-                    parseInt(target.find('.portlet-body').css('padding-bottom')) - 5;
+                    parseInt(target.find('.portlet-body').css('padding-bottom')) - 2;
 
                 if (App.getViewPort().width >= resBreakpointMd && target.hasClass("full-height-content-scrollable")) {
                     height = height - 35;
@@ -561,11 +524,11 @@ var Layout = function () {
         //IMPORTANT!!!: Do not modify the core handlers call order.
 
         initHeader: function() {
-            handleHorizontalMenu(); // handles horizontal menu    
+             handleHeader();
         },
 
         setSidebarMenuActiveLink: function(mode, el) {
-            handleSidebarMenuActiveLink(mode, el, null);
+            handleSidebarMenuActiveLink(mode, el);
         },
 
         setAngularJsSidebarMenuActiveLink: function(mode, el, $state) {
@@ -599,7 +562,7 @@ var Layout = function () {
 
         init: function () {            
             this.initHeader();
-            this.initSidebar(null);
+            this.initSidebar();
             this.initContent();
             this.initFooter();
         },
@@ -674,6 +637,6 @@ var Layout = function () {
 
 if (App.isAngularJsApp() === false) {
     jQuery(document).ready(function() {    
-       Layout.init(); // init metronic core componets
+        Layout.init(); // init metronic core componets
     });
 }
