@@ -1,0 +1,16 @@
+curl 172.31.23.21:9200/_cat/indices?v
+
+
+
+curl -H "Content-Type: application/json" -XGET 172.31.23.21:9200/pga_used-7.2.0-2019.07.27/_search?pretty -d '{"sort":{"@timestamp":"desc"}, "size":1}'
+
+curl -H "Content-Type: application/json" -XGET 172.31.23.21:9200/buffer_hit-7.2.0-2019.07.27/_search?pretty -d '{"sort":{"@timestamp":"desc"}, "size":1}'
+
+curl -H "Content-Type: application/json" -XGET 172.31.23.21:9200/sql_ash-7.2.0-2019.07.27/_search?pretty -d '{"sort":{"@timestamp":"desc"}, "size":1}'
+curl -H "Content-Type: application/json" -XGET 172.31.23.21:9200/library_hit-7.2.0-2019.07.27/_search?pretty -d '{"sort":{"@timestamp":"desc"}, "size":1}'
+curl -H "Content-Type: application/json" -XGET 172.31.23.21:9200/tbs_space-7.2.0-2019.07.27/_search?pretty -d '{"sort":{"@timestamp":"desc"}, "size":1}'
+
+curl -H "Content-Type: application/json" -XGET 172.31.23.21:9200/metricbeat-7.2.0-2019.07.27-000016/_search?pretty -d '{"sort":{"@timestamp":"desc"}, "size":1}'
+curl -H "Content-Type: application/json" -XGET 172.31.23.21:9200/backup_info-7.2.0-2019.07.27/_search?pretty -d '{"sort":{"@timestamp":"desc"}, "size":1}'
+
+

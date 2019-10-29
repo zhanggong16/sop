@@ -1,0 +1,20 @@
+<html>
+<body>
+
+<table border="1">
+  <tr>
+    <th>API名称</th>
+    <th>访问url</th>
+    <th>说明</th>
+  </tr>
+  {% for rs in api_router %}
+  <tr>
+    <td width="100px">{{rs['name']}}</td>
+    <td width="200px">{{rs['url']}}</td>
+    <td width="300px" style="word-break:break-all">{{rs['desc']}}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+</body>
+</html>
