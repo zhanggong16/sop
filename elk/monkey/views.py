@@ -184,6 +184,14 @@ def datatables_bootstrap_js():
 def table_datatables_colreorder_min_js():
     return redirect(url_for('static', filename='assets/pages/scripts/table-datatables-colreorder.min.js'))
 
+@bp.route('/assets/pages/scripts/table-datatables-managed.min.js')
+def table_datatables_managed_min_js():
+    return redirect(url_for('static', filename='assets/pages/scripts/table-datatables-managed.min.js'))
+
+@bp.route('/assets/pages/scripts/table-datatables-buttons.min.js')
+def table_datatables_buttons_min_js():
+    return redirect(url_for('static', filename='assets/pages/scripts/table-datatables-buttons.min.js'))
+
 @bp.route('/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js')
 def daterangepicker_min_js():
     return redirect(url_for('static', filename='assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'))
@@ -247,6 +255,14 @@ def select2_full_min_js():
 @bp.route('/assets/global/plugins/backstretch/jquery.backstretch.min.js')
 def jquery_backstretch_min_js():
     return redirect(url_for('static', filename='assets/global/plugins/backstretch/jquery.backstretch.min.js'))
+
+@bp.route('/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js')
+def bootstrap_multiselect_js():
+    return redirect(url_for('static', filename='assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js'))
+
+@bp.route('/assets/pages/scripts/components-bootstrap-multiselect.min.js')
+def components_bootstrap_mulitselect_min_js():
+    return redirect(url_for('static', filename='assets/pages/scripts/components-bootstrap-multiselect.min.js'))
 
 
 ###css
@@ -325,6 +341,11 @@ def select2_min_css():
 @bp.route('/assets/global/plugins/select2/css/select2-bootstrap.min.css')
 def select2_bootstrap_min_css():
     return redirect(url_for('static', filename='assets/global/plugins/select2/css/select2-bootstrap.min.css'))
+
+@bp.route('/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css')
+def bootstrip_mulitselect_css():
+    return redirect(url_for('static', filename='assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css'))
+
 
 ### img
 @bp.route('/assets/layouts/layout/img/logodsm.png')

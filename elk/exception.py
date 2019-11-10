@@ -30,3 +30,12 @@ class ParametersValueError(ElkError):
 
 class ApiAuthError(ElkError):
     _error = Error(14, 'Api auth error', 400)
+
+
+class EsError(ElkError):
+    _error = Error(21, 'ES connection error', 403)
+
+class EsNotFound(ElkError):
+    _error = Error(22, 'Not Found index from ES', 404)
+
+

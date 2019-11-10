@@ -1,0 +1,43 @@
+<table class="table" bordercolor="white">
+    <tbody>
+        <tr>
+            <td><b>{{first_data['ip_info'][0]}}</b></td>
+        </tr>
+        <tr>
+            <td>是否开启巡检:</td>
+            <td>
+                <input type="checkbox" checked id="test">
+            </td>
+            <td>是否设置报警:</td>
+            <td>
+                <input type="checkbox" checked id="test">
+            </td>
+        </tr>
+        <tr>
+            <td>运行时间:</td>
+            <td>{{first_data['uptime']}}</td>
+            <td>系统版本:</td>
+            <td>{{first_data['os_version']}}</td>
+        </tr>
+        <tr>
+            <td>CPU型号:</td>
+            <td>{{first_data['cpu_models']}}</td>
+            <td>CPU信息:</td>
+            <td>{{first_data['cpu_info']}}</td>
+        </tr>
+        <tr>
+            <td>挂载信息:</td>
+            <td>
+                {% for rs in first_data['mount_info'] %}
+                    {{rs}} <br>
+                {% endfor %}
+            </td>
+            <td>IP信息:</td>
+            <td>
+                {% for rs in first_data['ip_info'] %}
+                    {{rs}} <br>
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>

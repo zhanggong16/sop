@@ -10,6 +10,13 @@ blueprints = [
     'elk.error.views:bp',
     'elk.index.views:bp',
     'elk.monkey.views:bp',
+    'elk.system.views:bp',
+    'elk.loginfo.views:bp',
+    'elk.auth.views:bp'
+]
+
+extensions = [
+    'elk.extension:login_manager'
 ]
 
 api_router = import_string('elk.api.views:api_router')
@@ -17,6 +24,7 @@ api_router = import_string('elk.api.views:api_router')
 def create_app(config=None):
     app = Flask(__name__)
     app.config.from_object('elk.scheduled_task.scheduler')
+    app.secret_key = 'sop secret key'
     app.response_class = CorsResponse
     api = Api(app, catch_all_404s=True)
     
@@ -25,6 +33,11 @@ def create_app(config=None):
         blueprint = import_string(blueprint_name)
         app.register_blueprint(blueprint)
  
+    #define extension
+    for ext_name in extensions:
+        extension = import_string(ext_name)
+        extension.init_app(app)
+
     #register api
     for router in api_router:
         api.add_resource(router['resource_name'], router['url'])

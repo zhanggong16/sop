@@ -11,6 +11,7 @@ def logger(name):
     logger = logging.getLogger(name)
     return logger
 
+
 def run(cmd):
     _pipe = subprocess.PIPE
     obj = subprocess.Popen(cmd, stdin=_pipe,
@@ -22,6 +23,7 @@ def run(cmd):
     obj.stdin.close()
     _returncode = obj.returncode
     return _returncode, result
+
 
 def grouper(iterable, n):
     '''

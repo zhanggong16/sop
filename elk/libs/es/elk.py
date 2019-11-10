@@ -41,3 +41,14 @@ class ELK(object):
             return None
         else:
             return response.to_dict()['hits']
+
+    def log_query(self):
+        query_search = self.search_client
+        query_search = query_search.sort({"@timestamp": {"order": "desc"}})
+        #query_search = query_search[0:100]
+        try:
+            response = query_search.execute()
+        except NotFoundError:
+            return None
+        else:
+            return response.to_dict()['hits']
