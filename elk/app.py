@@ -12,7 +12,8 @@ blueprints = [
     'elk.monkey.views:bp',
     'elk.system.views:bp',
     'elk.loginfo.views:bp',
-    'elk.auth.views:bp'
+    'elk.auth.views:bp',
+    'elk.performance.views:bp'
 ]
 
 extensions = [

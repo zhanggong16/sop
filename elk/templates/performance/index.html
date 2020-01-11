@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block page_content %}
+<div class="page-content">
+    <!-- BEGIN PAGE HEADER-->
+    <h1 class="page-title"> 性能中心
+        <small>性能监控</small>
+    </h1>
+    <!-- END PAGE HEADER-->
+    <div class="row">
+        <div class="col-md-12">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption font-dark">
+                        <select id="single" class="form-control select2">
+                            <option value="hytest">hytest</option>
+                            <option value="hytest1">hytest1</option>
+                            <option value="hytest2">hytest2</option>
+                            <option value="hytest3">hytest3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div id="container-waitclass" style="height: 300px"></div>
+                        </div>
+                        <div class="col-md-8">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>主机名称</th>
+                                    <th>IP地址</th>
+                                    <th>服务类型</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>123</td>
+                                    <td>123</td>
+                                    <td>123</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="container-ast" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+                    </div>       
+                    <div class="row">
+                        <div id="container-aste" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+                    </div>
+                    <div class="row">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>主机名称</th>
+                                    <th>IP地址</th>
+                                    <th>服务类型</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>123</td>
+                                    <td>123</td>
+                                    <td>123</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>             
+                </div>
+            </div>
+        </div>
+        <!-- END EXAMPLE TABLE PORTLET-->
+    </div>
+</div>
+
+
+<script src="/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="/assets/highcharts/highcharts.js" type="text/javascript"></script>
+<script src="/assets/highcharts/highcharts-3d.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+$(function(){
+    $('#single').change(function() {
+    var hostname = $("#single").find('option:selected').val();
+        window.location.href="/performance/index/" + hostname; 
+    });
+    });
+
+var wait_class_data = {{ wait_class_data|tojson}};
+
+Highcharts.chart('container-waitclass', {
+    chart: {
+        type: 'pie',
+        options3d: {
+            enabled: true,
+            alpha: 45
+        }
+    },
+    title: {
+        text: 'Wait Class(%)'
+    },
+    plotOptions: {
+        pie: {
+            innerSize: 100,
+            depth: 45
+        }
+    },
+    series: [wait_class_data]
+});
+
+
+Highcharts.chart('container-ast', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Wait class趋势图'
+    },
+    xAxis: {
+        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: '次数'
+        },
+        stackLabels: {
+            enabled: true,
+            style: {
+                fontWeight: 'bold',
+                color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+            }
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        x: -30,
+        verticalAlign: 'top',
+        y: 0,
+        floating: false,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+        shadow: false,
+        navigation: {
+                activeColor: '#3E576F',
+                animation: true,
+                arrowSize: 12,
+                inactiveColor: '#CCC',
+                style: {
+                    fontWeight: 'bold',
+                    color: '#333',
+                    fontSize: '12px'
+                        }
+                }
+    },
+    tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true,
+                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+            }
+        }
+    },
+    series: [{
+        name: 'John',
+        data: [5, 3, 4, 7, 2]
+    }, {
+        name: 'Jane',
+        data: [2, 2, 3, 2, 1]
+    }, {
+        name: 'Joe',
+        data: [3, 4, 4, 2, 5]
+    }]
+});
+
+Highcharts.chart('container-aste', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Wait event趋势图'
+    },
+    xAxis: {
+        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: '次数'
+        },
+        stackLabels: {
+            enabled: true,
+            style: {
+                fontWeight: 'bold',
+                color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+            }
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        x: -30,
+        verticalAlign: 'top',
+        y: 0,
+        floating: false,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+        shadow: false,
+        navigation: {
+                activeColor: '#3E576F',
+                animation: true,
+                arrowSize: 12,
+                inactiveColor: '#CCC',
+                style: {
+                    fontWeight: 'bold',
+                    color: '#333',
+                    fontSize: '12px'
+                        }
+                }
+    },
+    tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true,
+                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+            }
+        }
+    },
+    series: [{
+        name: 'John',
+        data: [5, 3, 4, 7, 2]
+    }, {
+        name: 'Jane',
+        data: [2, 2, 3, 2, 1]
+    }, {
+        name: 'Joe',
+        data: [3, 4, 4, 2, 5]
+    }]
+});
+
+
+</script>
+
+{% endblock %}
+</html>

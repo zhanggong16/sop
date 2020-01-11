@@ -204,6 +204,10 @@ def jquery_bootstrap_growl_min_js():
 def highcharts_js():
     return redirect(url_for('static', filename='assets/highcharts/highcharts.js'))
 
+@bp.route('/assets/highcharts/highcharts-3d.js')
+def highcharts_3d_js():
+    return redirect(url_for('static', filename='assets/highcharts/highcharts-3d.js'))
+
 @bp.route('/assets/highcharts/heatmap.js')
 def heatmap_js():
     return redirect(url_for('static', filename='assets/highcharts/heatmap.js'))

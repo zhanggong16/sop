@@ -1,8 +1,10 @@
 #-*- coding:utf-8 -*-
-from elk.config import LOG_FILE
 import logging, os, subprocess
 import time, datetime
 import itertools
+import pytz
+from elk.config import LOG_FILE
+from tzlocal import get_localzone
 from xml.dom.minidom import parse
 
 def logger(name):
@@ -67,3 +69,14 @@ def xml_key(doc):
         return metric_dict
     else:
         return
+
+def local_string_to_utc(time_string, time_format='%Y-%m-%d %H:%M:%S'):
+    try:
+        local_dt = datetime.datetime.strptime(time_string, time_format)
+        local_tz = get_localzone()
+        localize_dt = local_tz.localize(local_dt)
+        return localize_dt.astimezone(pytz.UTC)
+    except ValueError:
+        msg = 'time_string {v} ValueError'.format(v=time_string)
+        logging.error(msg)
+        raise ParametersValueError(msg)

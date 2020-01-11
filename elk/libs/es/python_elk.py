@@ -15,20 +15,24 @@ class ELK(object):
     def __init__(self):
         self.elk_host_array = ES_SERVER.split(",")
         self.client = Elasticsearch(hosts=self.elk_host_array, timeout=60)
-        self.index = 'sql_ash-*'
+        self.index = 'sql_ash*'
         self.search_client = Search(using=self.client, index=self.index)        
 
     def last_query(self):
-        #starttime = local_string_to_utc('2019-08-26 20:05:00')
-        #endtime = local_string_to_utc('2019-08-26 20:09:00')
+        hostname = 'elkserver'
+        starttime = local_string_to_utc('2019-11-26 12:00:00')
+        endtime = local_string_to_utc('2019-11-26 13:00:00')
         
-        #query_search = self.search_client.filter('range', **{'@timestamp': {'gte': starttime, 'lte': endtime}})
-        #a = A('terms', field='event')
-        #query_search = query_search.aggs.bucket('event', a)
-        #query_search = query_search.aggs.metric('zhg', 'terms', field='event')
-        
-        query_search = query_search.sort({"@timestamp": {"order": "desc"}})
-        query_search = query_search[0:1]
+        query_search = self.search_client
+        query_search = self.search_client.filter('range', **{'@timestamp': {'gte': starttime, 'lte': endtime}})
+        #query_search = query_search.query({"term": {"machine": "hytest"}})
+        #query_search = query_search.filter("term", name=hostname.lower())
+        #query_search = query_search.query({"match": {"metricset.name": "diskio"}})
+        #query_search = query_search.query({"terms": {"metricset.name": ["filesystem",]}})
+        #query_search = query_search.query({"term": {"host.name": "hytest"}})
+        #query_search = query_search.query({"term": {"system.network.name": "lo"}})
+        #query_search = query_search.sort({"@timestamp": {"order": "desc"}})
+        query_search = query_search[0:1000]
         
         try:
             response = query_search.execute()
@@ -49,11 +53,13 @@ def local_string_to_utc(time_string, time_format='%Y-%m-%d %H:%M:%S'):
 
 
 a = ELK()
-#print a.last_query()
-
-for i in a.last_query():
-    res = i['_source']
-    print res['@timestamp'], res['event']
+res = a.last_query()
+for i in res:
+    #print i.get('_source').get("system").get("network").get("out").get("bytes")
+    print i
+#for i in a.last_query():
+#    res = i['_source']
+#    print res['@timestamp'], res['event']
     #if res['system']:
     #    if res['system'].get('process'):
     #        print res['@timestamp'], res['system'].get('process').get('memory')

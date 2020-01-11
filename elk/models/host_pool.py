@@ -5,7 +5,7 @@ class HostPool(object):
 
     def __init__(
             self, id_, uid, name, hostname, cpu_info, cpu_models, memory, 
-            mount_info, ip_info, os_type, os_version, app_type, uptime,
+            mount_info, ip_info, os_type, os_version, app_type, uptime, status, 
             deleted, deleted_at, created, updated):
         self.id_ = str(id_)
         self.uid = uid
@@ -20,6 +20,7 @@ class HostPool(object):
         self.os_version = os_version
         self.app_type = app_type
         self.uptime = uptime
+        self.status = status
         self.deleted = deleted
         self.deleted_at = deleted_at
         self.created = created
@@ -40,6 +41,7 @@ class HostPool(object):
             os_version = self.os_version,
             app_type = self.app_type,
             uptime = self.uptime,
+            status = self.status,
             deleted = self.deleted,
             deleted_at = self.deleted_at,
             created = self.created,
@@ -49,7 +51,7 @@ class HostPool(object):
     @classmethod
     def get_all_list(cls):
         sql = ("select id as id_, uid, name, hostname, cpu_info, cpu_models, memory, "
-                "mount_info, ip_info, os_type, os_version, app_type, uptime, "
+                "mount_info, ip_info, os_type, os_version, app_type, uptime, status, "
                 "deleted, deleted_at, created, updated "
                 "from {table} where deleted=0 order by created").format(table=cls._table)
         rs = db.execute(sql).fetchall()
@@ -59,7 +61,7 @@ class HostPool(object):
     @classmethod
     def get_all_by_uid(cls, uid):
         sql = ("select id as id_, uid, name, hostname, cpu_info, cpu_models, memory, "
-                "mount_info, ip_info, os_type, os_version, app_type, uptime, "
+                "mount_info, ip_info, os_type, os_version, app_type, uptime, status, "
                 "deleted, deleted_at, created, updated "
                 "from {table} where uid=:uid and deleted=0").format(table=cls._table)
         params = {"uid": uid}

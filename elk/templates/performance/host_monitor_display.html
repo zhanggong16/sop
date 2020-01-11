@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block page_content %}
+<div class="page-content">
+    <!-- BEGIN PAGE HEADER-->
+    <h1 class="page-title"> {{hostname}}
+    </h1>
+    <!-- END PAGE HEADER-->
+    <div class="row">
+            <div class="col-md-12">
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                            <table>
+                                <tbody>
+                                    <td>
+                                        选择时间 &nbsp
+                                    </td>
+                                    <td>
+                                        <div class="class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%"" id="reportrange"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                                        <span></span> <b class="caret"></b>
+                                        </div>
+                                    </td>
+                                </tbody>
+                            </table>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="monitor_border">
+                            <div class="row">
+                            {% for rs in title_data %}
+                            <div class="col-md-12">
+                                <div class="portlet light bordered">
+                                <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="icon-bar-chart font-dark hide"></i>
+                                    <span class="caption-subject font-dark bold uppercase">{{ rs['name'] }}</span>
+                                    <span class="caption-helper">周期:{{ rs['interval'] }}s, 单位:{{ rs['unit'] }}</span>
+                                </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <div id="container-{{rs['fid']}}" style="min-height: 220px; margin: 0 auto" ></div>
+                                </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    </div>
+                    <!--END TABS-->
+                </div>
+            </div>
+                <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+</div>
+
+<script src="/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="/assets/highcharts/highcharts.js" type="text/javascript"></script>
+<script type="text/javascript">
+        $(function() {
+            var start = moment().subtract(30, 'm');
+            var end = moment();
+            var hostname = "{{hostname}}"
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('YYYY-MM-D HH:mm:ss') + ' < -- > ' + end.format('YYYY-MM-D HH:mm:ss'));
+                $.post("/performance/host/json_data", {start:start.format('YYYY-MM-D HH:mm:ss'), end:end.format('YYYY-MM-D HH:mm:ss'), hostname:hostname},
+                    function(data){
+                        var dl = data.data;
+                        for (var i=0;i<dl.length;i++) {
+                            //start highcharts
+                            Highcharts.setOptions({ global: { useUTC: false } });
+                            Highcharts.chart('container-'+dl[i].fid, {
+                                chart: {
+                                    type: 'spline'
+                                },
+                                title: {
+                                    text: ''
+                                },
+                                xAxis: {
+                                    type: 'datetime',
+                                    dateTimeLabelFormats: { 
+                                        day: '%m-%d',
+                                    },
+                                },
+                                yAxis: {
+                                    title: {
+                                        text: ''
+                                    },
+                                },
+                                tooltip: {
+                                    crosshairs: true,
+                                    xDateFormat: '%Y-%m-%d %H:%M:%S',
+                                    shared: true
+                                },
+                                plotOptions: {
+                                    spline: {
+                                        marker: {
+                                            radius: 4,
+                                            lineColor: '#666666',
+                                            lineWidth: 1
+                                        }
+                                    }
+                                },
+                                scrollbar: {
+                                        enabled: true
+                                },
+                                series: dl[i].res
+                            });
+                    //end highcharts
+                    }
+                    //end for
+                    });      
+            }            
+       
+            $('#reportrange').daterangepicker({
+                timePicker: true,
+                startDate: start,
+                endDate: end,
+                minDate: moment().subtract(90, 'days'),
+                maxDate: moment(),
+                dateLimit: {days: 3},
+                ranges: {
+                   '近30分钟': [moment().subtract(30, 'm'), moment()],
+                   '近1个小时': [moment().subtract(1, 'h'), moment()],
+                   '近3个小时': [moment().subtract(3, 'h'), moment()],
+                   '近6个小时': [moment().subtract(6, 'h'), moment()],
+                   '近12个小时': [moment().subtract(12, 'h'), moment()],
+                   '近1天': [moment().subtract(1, 'd'), moment()],
+                   '近3天': [moment().subtract(3, 'd'), moment()],
+                    }
+                }, cb);
+
+            cb(start, end);
+        });
+</script>
+{% endblock %}
+</html>
